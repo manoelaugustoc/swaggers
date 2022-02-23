@@ -1,0 +1,1033 @@
+openapi: 3.0.0
+info:
+  title: Payment Services API
+  description: Payment Services API
+  version: 1.0.0
+  contact:
+    url: "https://www.connectpay.com"
+    email: "dev-support@connectpay.com"
+
+servers:
+- url: "https://api5-stage.connectpay.com"
+  description: "ConnectPay Stage server-to-server API server"
+- url: "https://api5.connectpay.com"
+  description: "ConnectPay PROD server-to-server API server"
+
+paths:
+
+  /ob/payments:
+    post:
+      operationId: InitiatePayment
+      summary: Payment Initiation Request
+      description: |
+        This method is used to initiate a payment
+      tags:
+      - Payments
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentsRequest"
+            examples:
+              Unstructured payment:
+                $ref: "#/components/examples/PaymentInitiationBody_example_Unstructured"
+              Structured payment:
+                $ref: "#/components/examples/PaymentInitiationBody_example_Structured"
+      
+      parameters:
+
+      - in: header
+        name: Host
+        description: ConnectPay API endopoint host. Usualy generated automaticaly by your software library
+        schema:
+          type: string
+        required: true
+        example: "https://api5-stage.connectpay.com" 
+
+      - in: header
+        name: Content-Length
+        description: Lenght of payload in bytes. Usualy calculated automaticaly by your software library
+        schema:
+          type: integer
+        example: 125
+
+      - in: header
+        name: Authorization
+        description: Bearer type Access Token containing `ob-ps` scope
+        schema:
+          type: string
+        required: true
+        example: "Bearer 6PiCzzKBVHzhPax8Ka4k917Eh30G"
+
+      - in: header
+        name: X-Request-ID
+        description: UUID type ID of the request, unique to the call, as determined by the initiating party.
+        schema:
+          type: string
+        required: true
+        example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+
+      - in: header
+        name: Content-Type
+        description: application/json
+        schema:
+          type: string
+          default: application/json
+        required: true
+        
+      - in: header
+        name: Accept
+        description: Accept Header with version parameter
+        schema:
+          type: string
+          default: application/json;version=1
+        required: true
+      security:
+      - {}
+      - BearerAuthOAuth: []
+      
+      
+      
+      
+      
+      
+      responses:
+        "201":
+          description: "Successful operation, payment data accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentsResponse200"
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+              description: "unique UUID, that identifies the request"
+              required: true
+              example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode400"
+        "401":
+          description: "Unauthorised"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode401"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode404"
+        "409":
+          description: "Conflict"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode409"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode500"
+        "503":
+          description: "Service Unavailable"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode503"
+  
+  /ob/payments/{PaymentId}:
+    get:
+      tags:
+      - "Payments"
+      summary: "Payment Information"
+      description: "Retrive Payment data"
+      operationId: "getPaymentInformation"
+      parameters:
+  
+      - in: path
+        name: "PaymentId"
+        description: "Payment Order ID"
+        style: "simple"
+        schema:
+          type: string
+        required: true
+        example: "a48d355e-12d7-4fe6-8047-a8e1c59480f7"
+
+      - in: header
+        name: Host
+        description: ConnectPay API endopoint host. Usualy generated automaticaly by your software library
+        schema:
+          type: string
+        required: true
+        example: "https://api5-stage.connectpay.com" 
+
+      - in: header
+        name: Content-Length
+        description: Lenght of payload in bytes. Usualy calculated automaticaly by your software library
+        schema:
+          type: integer
+        example: 125
+
+      - in: header
+        name: "Authorization"
+        description: "Bearer type Access Token containing `ob-ps` scope"
+        schema:
+          type: string
+        required: true
+        example: "Bearer 6PiCz6KBVHzhPax8Ka4k917Eh30G"
+
+      - in: header
+        name: X-Request-ID
+        description: "UUID type ID of the request, unique to the call, as determined by the initiating party."
+        schema:
+          type: string
+        required: true
+        example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+
+      - in: header
+        name: Accept
+        description: "Accept Header with version parameter"
+        schema:
+          type: string
+          default: "application/json;version=1"
+        required: true      
+      
+      security:
+      - {}
+      - BearerAuthOAuth: []
+      
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentsInfoResponse200"
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+              description: "Unique UUID, that identifies the request"
+              required: true
+              example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode400"
+        "401":
+          description: "Unauthorised"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode401"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode404"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode500"
+        "503":
+          description: "Service Unavailable"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode503"
+      deprecated: false
+
+
+  /ob/payments/{PaymentId}/status:
+    get:
+      tags:
+      - "Payments"
+      summary: "Payment Status"
+      description: "Retrieves Status of the Payment"
+      operationId: "getPaymentStatus"
+      parameters:
+      
+      - in: path
+        name: "PaymentId"
+        description: "Payment Order ID"
+        style: "simple"
+        schema:
+          type: string
+        required: true
+        example: "a48d355e-12d7-4fe6-8047-a8e1c59480f7"
+      
+      - in: header
+        name: Host
+        description: ConnectPay API endopoint host. Usualy generated automaticaly by your software library
+        schema:
+          type: string
+        required: true
+        example: "https://api5-stage.connectpay.com" 
+
+      - in: header
+        name: Content-Length
+        description: Lenght of payload in bytes. Usualy calculated automaticaly by your software library
+        schema:
+          type: integer
+        example: 125
+
+      - in: header
+        name: "Authorization"
+        description: "Bearer type Access Token containing `ob-ps` scope"
+        schema:
+          type: string
+        required: true
+        example: "Bearer 6PiCz6KBVHzhPax8Ka4k917Eh30G"
+      - in: header
+        name: X-Request-ID
+        description: "UUID type ID of the request, unique to the call, as determined by the initiating party."
+        schema:
+          type: string
+        required: true
+        example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+
+      - in: header
+        name: Accept
+        description: "Accept Header with version parameter"
+        schema:
+          type: string
+          default: "application/json;version=1"
+        required: true
+
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentsStatusResponse200"
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+              description: "Unique UUID, that identifies the request"
+              required: true
+              example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode400"
+        "401":
+          description: "Unauthorised"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode401"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode404"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode500"
+        "503":
+          description: "Service Unavailable"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode503"
+      deprecated: false
+
+  /ob/payments/{PaymentId}/authorisations/nosca:
+    post:
+      tags:
+      - "Payments"
+      summary: "Authorize Payment"
+      description: "Authorize Payment Without explicit SCA procedure"
+      operationId: "authPaymentNoSca"
+
+      parameters:
+
+
+      - in: path
+        name: "PaymentId"
+        description: "Payment Order ID"
+        style: "simple"
+        schema:
+          type: string
+        required: true
+        example: "a48d355e-12d7-4fe6-8047-a8e1c59480f7"
+
+      - in: header
+        name: Host
+        description: ConnectPay API endopoint host. Usualy generated automaticaly by your software library
+        schema:
+          type: string
+        required: true
+        example: "https://api5-stage.connectpay.com" 
+
+      - in: header
+        name: Content-Length
+        description: Lenght of payload in bytes. Usualy calculated automaticaly by your software library
+        schema:
+          type: integer
+        example: 125
+
+      - in: header
+        name: "Authorization"
+        description: "Bearer type Access Token containing `ob-ps:authz-nosca` scope"
+        schema:
+          type: string
+        required: true
+        example: "Bearer 6PiCz6KBVHzhPax8Ka4k917Eh30G"
+
+      - in: header
+        name: X-Request-ID
+        description: "UUID type ID of the request, unique to the call, as determined by the initiating party."
+        schema:
+          type: string
+        required: true
+        example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+
+      - in: header
+        name: Accept
+        description: "Accept Header with version parameter"
+        schema:
+          type: string
+          default: "application/json;version=1"
+        required: true
+
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizePaymentNoScaResponse200"
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+              description: "Unique UUID, that identifies the request"
+              required: true
+              example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode400"
+        "401":
+          description: "Unauthorised"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode401"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode404"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode500"
+        "503":
+          description: "Service Unavailable"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode503"
+      deprecated: false
+
+  /ob/payments/{PaymentId}/authorisations/{PaymentAuthId}:
+    get:
+      tags:
+      - "Payments"
+      summary: "Authorization Status"
+      description: "Gets Payment Authorization Status"
+      operationId: "getAuthorizationStatus"
+      parameters:
+
+      
+      - in: path
+        name: "PaymentId"
+        description: "Payment Order ID"
+        style: "simple"
+        schema:
+          type: string
+        required: true
+        example: "a48d355e-12d7-4fe6-8047-a8e1c59480f7"
+      
+      - in: path
+        name: "PaymentAuthId"
+        description: "Authorization Id of required payment"
+        style: "simple"
+        schema:
+          type: string
+        required: true
+        example: "65faa036-a469-4031-a13a-da83e2a4db14"
+
+      - in: header
+        name: Host
+        description: ConnectPay API endopoint host. Usualy generated automaticaly by your software library
+        schema:
+          type: string
+        required: true
+        example: "https://api5-stage.connectpay.com" 
+
+      - in: header
+        name: Content-Length
+        description: Lenght of payload in bytes. Usualy calculated automaticaly by your software library
+        schema:
+          type: integer
+        example: 125
+
+      - in: header
+        name: "Authorization"
+        description: "Bearer type Access Token containing `ob-ps` scope"
+        schema:
+          type: string
+        required: true
+        example: "Bearer 6PiCz6KBVHzhPax8Ka4k917Eh30G"
+
+      - in: header
+        name: X-Request-ID
+        description: "UUID type ID of the request, unique to the call, as determined by the initiating party."
+        schema:
+          type: string
+        required: true
+        example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+
+      - in: header
+        name: Accept
+        description: "Accept Header  with version parameter"
+        schema:
+          type: string
+          default: "application/json;version=1"
+        required: true
+
+      responses:
+        "200":
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthorizationStatusResponse200"
+          headers:
+            X-Request-ID:
+              schema:
+                type: string
+              description: "Unique UUID, that identifies the request"
+              required: true
+              example: "e089d5ef-8b27-455f-9112-c6ba47f31377"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode400"
+        "401":
+          description: "Unauthorised"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode401"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode404"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode500"
+        "503":
+          description: "Service Unavailable"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageCode503"
+      deprecated: false
+
+components:
+
+  securitySchemes:
+    BearerAuthOAuth:
+      type: "http"
+      scheme: "bearer"
+
+  schemas:
+
+    PaymentsResponse200:
+      type: "object"
+      properties:
+        paymentId:
+          type: string
+          description: "Resource identification of the generated payment initiation resource"
+          example: "5b57550a-48ab-48bb-951d-6f318d08e62f"
+        transactionStatus:
+          type: string
+          description: "UUID type ID of the request, unique to the call, as determined\
+            \ by the initiating party\nValid values are:\n  - `RCVD`: The payment\
+            \ request has been received\n  - `PDNG`: The payment status is in pending\
+            \ state.\n  - `ACCP`: The payment has been accepted.\n  - `ACSC`: The\
+            \ payment is completed.\n  - `RJCT`: The payment is rejected.\n  - `CANC`:\
+            \ The payment is cancelled.\n"
+          enum:
+          - "RCVD"
+          - "PDNG"
+          - "ACCP"
+          - "ACSC"
+          - "RJCT"
+          - "CANC"
+        transactionFeeIndicator:
+          type: "boolean"
+          description: "If equals 'true', the transaction will involve specific transaction\
+            \ cost as shown by ConnectPay in their public price list or as agreed between\
+            \ ConnectPay and Customer. If equals 'false', the transaction will not involve additional\
+            \ specific transaction costs to the Customer\n"
+          example: true
+        transactionFees:
+          $ref: "#/components/schemas/TransactionFees"
+        _links:
+          $ref: "#/components/schemas/Links"
+
+    PaymentsInfoResponse200:
+      type: "object"
+      description: "Contains currency and amount."
+      properties:
+        debtorAccount:
+          $ref: "#/components/schemas/DebtorIban"
+        ultimateDebtor:
+          $ref: "#/components/schemas/UltimateDebtor"  
+        creditorAccount:
+          $ref: "#/components/schemas/CreditorIban"
+        creditorName:
+          type: string
+          description: "Name of the person crediting the amount."
+          example: "John"
+        instructedAmount:
+          $ref: "#/components/schemas/InstructedAmount"
+        remittanceInformation:
+          oneOf:
+          - $ref: "#/components/schemas/RemittanceInformationStructured"
+          - $ref: "#/components/schemas/RemittanceInformationUnstructured"
+        transactionStatus:
+          type: string
+          description: "Status of the transaction."
+          example: "RCVD"
+    PaymentsStatusResponse200:
+      type: "object"
+      description: "Contains currency and amount."
+      properties:
+        transactionStatus:
+          type: string
+          description: "UUID type ID of the request, unique to the call, as determined\
+            \ by the initiating party\nValid values are:\n  - `RCVD`: The payment\
+            \ request has been received\n  - `PDNG`: The payment status is in pending\
+            \ state.\n  - `ACCP`: The payment has been accepted.\n  - `ACSC`: The\
+            \ payment is completed.\n  - `RJCT`: The payment is rejected.\n  - `CANC`:\
+            \ The payment is cancelled.\n"
+          enum:
+          - "RCVD"
+          - "PDNG"
+          - "ACCP"
+          - "ACSC"
+          - "RJCT"
+          - "CANC"
+    AuthorizePaymentNoScaResponse200:
+      type: "object"
+      description: "Contains Complete Payment Response."
+      properties:
+        authorisationId:
+          type: string
+          description: "Payment Authorisation Id"
+        authorisationStatus:
+          type: string
+          description: "Payment Authorisation Status"
+        _links:
+          $ref: "#/components/schemas/CompletePaymentLinks"
+    AuthorizationStatusResponse200:
+      type: "object"
+      description: "Contains currency and amount."
+      properties:
+        scaStatus:
+          type: string
+          description: "UUID type ID of the request, unique to the call, as determined\
+            \ by the initiating party\nValid values are:\n  - `received`:        \
+            \   The payment request has been received\n  
+            \  - `finalised`:          Payment Finalized.\n  - `failed`:         \
+            \    Payment Failed.\n  - `exempted`:           Exempted.\n"
+          enum:
+          - "received"
+          - "finalised"
+          - "failed"
+          - "exempted"
+    MessageCode400:
+      type: "object"
+      properties:
+        tppMessages:
+          type: "array"
+          description: "MessageCode for 400 Error."
+          items:
+            $ref: "#/components/schemas/TPPMessage400"
+    MessageCode401:
+      type: "object"
+      properties:
+        tppMessages:
+          type: "array"
+          description: "MessageCode for 401 Error."
+          items:
+            $ref: "#/components/schemas/TPPMessage401"
+    MessageCode404:
+      type: "object"
+      properties:
+        tppMessages:
+          type: "array"
+          description: "MessageCode for 404 Error."
+          items:
+            $ref: "#/components/schemas/TPPMessage404"
+    MessageCode409:
+      type: "object"
+      properties:
+        tppMessages:
+          type: "array"
+          description: "MessageCode for 409 Error."
+          items:
+            $ref: "#/components/schemas/TPPMessage409"
+    MessageCode500:
+      type: "object"
+      properties:
+        tppMessages:
+          type: "array"
+          description: "MessageCode for 500 Error."
+          items:
+            $ref: "#/components/schemas/TPPMessage500"
+    MessageCode503:
+      type: "object"
+      properties:
+        tppMessages:
+          type: "array"
+          description: "MessageCode for 503 Error."
+          items:
+            $ref: "#/components/schemas/TPPMessage503"
+    TPPMessage400:
+      type: "object"
+      properties:
+        category:
+          type: string
+          enum:
+          - "ERROR"
+          - "WARNING"
+          description: "Type of error"
+        code:
+          type: string
+          enum:
+          - "BAD_REQUEST_400_PS"
+          - "FORMAT_ERROR"
+          - "INVALID_SCOPE"
+          description: "Error Code"
+        text:
+          type: string
+          description: "Additional text"
+        path:
+          type: string
+          description: "Api path"
+    TPPMessage401:
+      type: "object"
+      properties:
+        category:
+          type: string
+          enum:
+          - "ERROR"
+          - "WARNING"
+          description: "Type of error"
+        code:
+          type: string
+          enum:
+          - "TOKEN_INVALID"
+          - "UNAUTHORIZED_401_PS"
+          description: "Error Code"
+        text:
+          type: string
+          description: "Additional text"
+        path:
+          type: string
+          description: "Api path"
+    TPPMessage404:
+      type: "object"
+      properties:
+        category:
+          type: string
+          enum:
+          - "ERROR"
+          - "WARNING"
+          description: "Type of error"
+        code:
+          type: string
+          enum:
+          - "NOT_FOUND_404_PS"
+          - "NOT_FOUND"
+          description: "Error Code"
+        text:
+          type: string
+          description: "Additional text"
+        path:
+          type: string
+          description: "Api path"
+    TPPMessage409:
+      type: "object"
+      properties:
+        category:
+          type: string
+          enum:
+          - "ERROR"
+          - "WARNING"
+          description: "Type of error"
+        code:
+          type: string
+          enum:
+          - "CONFLICT_409_PS"
+          description: "Error Code"
+        text:
+          type: string
+          description: "Additional text"
+        path:
+          type: string
+          description: "Api path"
+    TPPMessage500:
+      type: "object"
+      properties:
+        category:
+          type: string
+          enum:
+          - "ERROR"
+          - "WARNING"
+          description: "Type of error"
+        code:
+          type: string
+          enum:
+          - "INTERNAL_SERVER_ERROR_500_PS"
+          description: "Error Code"
+        text:
+          type: string
+          description: "Additional text"
+        path:
+          type: string
+          description: "Api path"
+    TPPMessage503:
+      type: "object"
+      properties:
+        category:
+          type: string
+          enum:
+          - "ERROR"
+          - "WARNING"
+          description: "Type of error"
+        code:
+          type: string
+          enum:
+          - "SERVICE_UNAVAILABLE_503_PS"
+          description: "Error Code"
+        text:
+          type: string
+          description: "Additional text"
+        path:
+          type: string
+          description: "Api path"
+    PaymentsRequest:
+      type: "object"
+      description: "Contains currency and amount."
+      properties:
+        paymentRail:
+          $ref: "#/components/schemas/PaymentRail"
+        debtorAccount:
+          $ref: "#/components/schemas/DebtorIban"
+        ultimateDebtor:
+          $ref: "#/components/schemas/UltimateDebtor"
+        creditorAccount:
+          $ref: "#/components/schemas/CreditorIban"
+        creditorName:
+          type: string
+          description: "Name of the person crediting the amount."
+          example: "John"
+        instructedAmount:
+          $ref: "#/components/schemas/InstructedAmount"
+        remmitanceInformation:
+          oneOf:
+          - $ref: "#/components/schemas/RemittanceInformationStructured"
+          - $ref: "#/components/schemas/RemittanceInformationUnstructured"
+      required:
+      - "paymentRail"
+      - "debtorAccount"
+      - "creditorAccount"
+      - "creditorName"
+      - "instructedAmount"
+      - "remmitanceInformation"
+
+    PaymentRail:
+      type: "string"
+      description: "Desired payment rail. Only SEPA_SCT is supported"
+      enum: ["SEPA_SCT"]  
+      example: "SEPA_SCT"
+    DebtorIban:
+      type: "object"
+      description: "Contains Iban of the debitor."
+      properties:
+        iban:
+          type: string
+          description: "IBAN."
+          example: "LT343740010000000031"
+    UltimateDebtor:
+      type: "object"
+      properties:
+        name:
+          type: string
+          description: Full name of ultimate Debtor
+          example : "John Doe"
+    CreditorIban:
+      type: "object"
+      description: "Contains Iban of the creditor."
+      properties:
+        iban:
+          type: string
+          description: "IBAN."
+          example: "LT343740010000000031"
+    RemittanceInformationStructured:
+      type: "object"
+      description: "details about the payment - structured."
+      properties:
+        remittanceInformationStructured:
+          type: "object"
+          properties:
+            reference:
+              type: string
+              example: "hello structured payment"
+    RemittanceInformationUnstructured:
+      description: "details about the payment - Unstructured.\n"
+      type: string
+      example: "hello unstructured payment"
+    InstructedAmount:
+      type: "object"
+      description: "Contains currency and amount."
+      properties:
+        currency:
+          type: string
+          description: "Currency code in accordance with ISO4217."
+          example: "EUR"
+          pattern: "[A-Z]{3}"
+        amount:
+          type: string
+          description: "The amount given with fractional digits, where fractions must\
+            \ be compliant to the currency definition. Up to 14 significant figures.\
+            \ Negative amounts are signed by minus. The decimal separator is a dot.\n"
+          example: "123.45"
+          pattern: "-?[0-9]{1,14}(\\.[0-9]{1,3})?"
+    TransactionFees:
+      type: "object"
+      description: "Contains currency and amount."
+      properties:
+        currency:
+          type: string
+          description: "Currency code in accordance with ISO4217."
+          example: "EUR"
+          pattern: "[A-Z]{3}"
+        amount:
+          type: string
+          description: "The amount given with fractional digits, where fractions must\
+            \ be compliant to the currency definition. Up to 14 significant figures.\
+            \ Negative amounts are signed by minus. The decimal separator is a dot.\n"
+          example: "123.45"
+          pattern: "-?[0-9]{1,14}(\\.[0-9]{1,3})?"
+    Links:
+      type: "object"
+      description: "Contains links to payment information, payment status, SCA Status\
+        \ and SCA Redirect."
+      properties:
+        self:
+          $ref: "#/components/schemas/SelfHref"
+        status:
+          $ref: "#/components/schemas/StatusHref"
+    CompletePaymentLinks:
+      type: "object"
+      description: "Contains links to SCA Status"
+      properties:
+        status:
+          $ref: "#/components/schemas/SCAStatusHref"
+    SelfHref:
+      type: "object"
+      description: "Has link to payment info"
+      properties:
+        href:
+          type: string
+          description: "fetches payment info"
+          example: "https://api2-stage.connectpay.com/ob/payments/5b57550a-48ab-48bb-951d-6f318d08e62f"
+    StatusHref:
+      type: "object"
+      description: "Has link to payment status"
+      properties:
+        href:
+          type: string
+          description: "fetches payment status"
+          example: "https://api2-stage.connectpay.com/ob/payments/5b57550a-48ab-48bb-951d-6f318d08e62f/status"
+    SCAStatusHref:
+      type: "object"
+      description: "Has link to payment authorization status"
+      properties:
+        href:
+          type: string
+          description: "fetches payment authorization status"
+          example: "https://api2-stage.connectpay.com/ob/payments/ae74a9fe-7bba-4545-a1a6-78c3bacd8915/authorisations/293607dd-b250-4469-9533-f5841e0f2694"
+  examples:
+    PaymentInitiationBody_example_Unstructured:
+      value:
+        paymentRail: "SEPA_SCT"
+        debtorAccount:
+          iban: "LT103740020000000123"
+        ultimateDebtor:
+          name: "John Doe"  
+        creditorAccount:
+          iban: "LT927300010136383795"
+        creditorName: "Merchant123"
+        instructedAmount:
+          amount: "1002.59"
+          currency: "EUR"
+        remittanceInformationUnstructured: "Test Payment"
+    PaymentInitiationBody_example_Structured:
+      value:
+        paymentRail: "SEPA_SCT"
+        debtorAccount:
+          iban: "LT103740020000000123"
+        ultimateDebtor:
+          name: "John Doe"
+        creditorAccount:
+          iban: "LT927300010136383795"
+        creditorName: "Merchant123"
+        instructedAmount:
+          amount: "1002.59"
+          currency: "EUR"
+        remittanceInformationStructured:
+          reference: "Test Payment"
